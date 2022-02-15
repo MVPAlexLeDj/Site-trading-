@@ -17,10 +17,11 @@ class RoboTrading():
         """
         parsed = json.loads(candle_msg)
         if 'AAPL' in parsed:
-            if parsed['AAPL']['c'] < parsed['AAPL']['l']:
-                self.client.buy('AAPL', 1)
+            if self.client.money > parsed['AAPL']['c']:
+                if self.previous_price > parsed['AAPL']['c']:
+                    self.client.buy('AAPL', 1)
+            if self.client.actions['AAPL'] > 1:
+                if self.previous_price < parsed['AAPL']['c']:
+                    self.client.sell('AAPL', 1)
 
-            if parsed['AAPL']['c'] > parsed['AAPL']['h']:
-                self.client.sell('AAPL', 1)
-
-            self.previous_price = parsed['AAPL']['c']
+            self.previous_price = parsed['AAPL']['h']
